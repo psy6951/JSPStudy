@@ -11,7 +11,7 @@ import jakarta.servlet.ServletContext;
 public class JDBConnect {
 	//멤버변수: DB연결, 정적쿼리실행,, 동적쿼리실행, select 결과반환
 	public Connection con;
-	public Statement stmt;
+	public java.sql.Statement stmt;
 	public PreparedStatement psmt;
 	public ResultSet rs;
 

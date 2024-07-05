@@ -1,3 +1,4 @@
+<%@page import="utils.BoardPage"%>
 <%@page import="model1.board.BoardDTO"%>
 <%@page import="model1.board.BoardDAO"%>
 <%@page import="java.util.Map"%>
@@ -33,8 +34,46 @@ if (searchWord !=null){
 
 //Map을 인수로 게시물의 개수를 카운트
 int totalCount =dao.selectCount(param);
+
+/*** #paging 페이지처리 start ***/
+/*
+web.xml에 설정한 컨텍스트 초기화 파라미터를 읽어온다.
+초기화 파라미터는 String으로 저장되므로 
+산술연산을 위해서는 int형으로 변환해야 한다.
+*/
+int pageSize = Integer.parseInt(application.getInitParameter("POSTS_PER_PAGE"));
+int blockPage = Integer.parseInt(application.getInitParameter("PAGES_PER_BLOCK"));
+/*
+전체페이지 수를 계산한다.
+(전체게시물 수 / 페이지당 게시물 수)=> 결과값의 올림처리
+Ex) 108/10=10.8 =>올림처리하여 11페이지로 계산
+*/
+int totalPage = (int)Math.ceil((double)totalCount / pageSize);
+
+/*
+목록에 처음 진입했을때는 페이지 관련 파라미터가 없는 상태이므로 
+1page로 지정한다. 만약 파라미터 pageNum이 있다면 request내장객체를 통해 
+받아온 후 페이지 번호로 지정하면 된다.
+*/
+int pageNum =1;
+String pageTemp = request.getParameter("pageNum");
+if(pageTemp != null && !pageTemp.equals(""))
+	pageNum = Integer.parseInt(pageTemp);
+
+/*
+게시물의 구간을 계산한다.
+각 페이지의 시작번호와 종료번호를 현재 페이지번호와 페이지사이즈를 통해 
+계산한 후 DAO로 전달하기 위해 Map에 추가한다.
+*/
+int start = (pageNum -1) * pageSize + 1;
+int end = pageNum * pageSize;
+param.put("start", start);
+param.put("end", end);
+/***페이지처리 end***/
+
+
 //목록에 출력한 게시물을 인출하여 반환
-List<BoardDTO> boardLists = dao.selectList(param);
+List<BoardDTO> boardLists = dao.selectListPage(param);
 //DB연결 해제
 dao.close();
 
@@ -48,7 +87,7 @@ dao.close();
 <body>
     <jsp:include page="../Common/Link.jsp" />  
 
-    <h2>목록 보기(List)</h2>
+    <h2>목록 보기(List) - 현재페이지 : <%= pageNum %>(전체: <%= totalPage %>)</h2>
     <form method="get">  
     <table border="1" width="90%">
     <tr>
@@ -85,19 +124,21 @@ if(boardLists.isEmpty()){
 else{
 	//출력할 데이터가 있다면 확장 for문으로 반복해서 출력
 	int virtualNum =0;
+	int countNum =0;
+
 	for(BoardDTO dto: boardLists)
 	{
 		//게시물의 개수로 목록의 가상번호를 부여한다.
-		virtualNum = totalCount--;
+		virtualNum = totalCount - (((pageNum-1)* pageSize)+ countNum++);
 %>
         <tr align="center">
-            <td><%=virtualNum %></td>  
-            <td align="left"> 
+            <td><%=virtualNum %></td>   <!-- 게시물 번호 -->
+            <td align="left"> <!-- 제목(+하이퍼링크) -->
             	<a href= "View.jsp?num=<%=dto.getNum() %>"><%=dto.getTitle() %></a>
             </td>
-            <td align="center"><%=dto.getId() %></td>           
-            <td align="center"><%=dto.getVisitcount() %></td>   
-            <td align="center"><%=dto.getPostdate() %></td>    
+            <td align="center"><%=dto.getId() %></td>    <!-- 작성자 아이디 -->
+            <td align="center"><%=dto.getVisitcount() %></td>   <!-- 조회수 -->
+            <td align="center"><%=dto.getPostdate() %></td>    <!-- 작성일 -->
         </tr>
 <%
 	}
@@ -105,7 +146,12 @@ else{
 %>
     </table>
     <table border="1" width="90%">
-        <tr align="right">
+        <tr align="center">
+        <!-- 페이징 처리 -->
+        	<td>
+        		<%= BoardPage.pagingStr(totalCount, pageSize, 
+        			blockPage, pageNum, request.getRequestURI()) %>
+        	</td>
             <td><button type="button" onclick="location.href='Write.jsp';">글쓰기</button></td>
         </tr>
     </table>

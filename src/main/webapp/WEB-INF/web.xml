@@ -71,7 +71,7 @@
 <!-- 1. 한 페이지에 출력할 게시물의 개수 설정 -->
 <context-param>
 	<param-name>POSTS_PER_PAGE</param-name>
-	<param-value>2</param-value>
+	<param-value>5</param-value>
 </context-param>
 <!-- 2. 한 블럭당 출력할 페이지번호의 개수 설정 -->
 <context-param>
@@ -140,18 +140,24 @@
  
  
  
+<!-- 글쓰기 매핑 -->
+<servlet>
+	<servlet-name>MVCBoardWrite</servlet-name>
+	<servlet-class>model2.mvcboard.WriteController</servlet-class>
+	<!-- 파일 업로드시 제한용량 설정 -->
+	<multipart-config>
+		<max-file-size>104857600</max-file-size>
+		<max-request-size>1048576000</max-request-size>
+	</multipart-config>
+</servlet>
+<servlet-mapping>
+	<servlet-name>MVCBoardWrite</servlet-name>
+	<url-pattern>/mvcboard/write.do</url-pattern>
+</servlet-mapping>
  
  
  
- 
- 
- 
- 
- 
- 
-  
-  
-  
+
   
   
   

@@ -9,7 +9,7 @@
 <style>a{text-decoration:none;}</style>
 </head>
 <body>
-    <h2>파일 첨부형 게시판 - 목록 보기(List)</h2>
+    <h2>파일 첨부형 게시판 - 💚목록 보기(List)💚</h2>
 
     <!-- 검색 폼 -->
     <form method="get">  
@@ -62,7 +62,7 @@
             	${ map.totalCount - (((map.pageNum-1) * map.pageSize) + loop.index) }
             </td>
             <td align="left">
-                <a herf="../mvcboard/view.do?idx=${ row.idx }">
+                <a href="../mvcboard/view.do?idx=${ row.idx }">
                 	${ row.title }
                 </a>
             </td> 

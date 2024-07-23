@@ -55,7 +55,7 @@
         <td>            
 	        <!-- 글 작성시 첨부파일은 필수사항이 아니므로 
 	        첨부한 경우에만 다운로드 링크를 화면에 출력한다. -->
-	        <c:if test="${ mot empty dto.ofile }">
+	        <c:if test="${ not empty dto.ofile }">
 	        ${ dto.ofile }
         	<a href="../mvcboard/download.do?ofile=${ dto.ofile }&sfile=${ dto.sfile }&idx=${ dto.idx }">
         	[다운로드]            

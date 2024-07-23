@@ -14,7 +14,7 @@ public class MVCBoardDAO extends DBConnPool {
 		super();
 	}
 	
-	//게시물의 게수를 카운트. 검색어가 있는 경우 where절을 동적으로 추가한다.
+	//게시물의 개수를 카운트. 검색어가 있는 경우 where절을 동적으로 추가한다.
 	public int selectCount(Map<String, Object>map) {
 		int totalCount = 0;
 		
